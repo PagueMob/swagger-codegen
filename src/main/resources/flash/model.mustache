@@ -1,15 +1,17 @@
 package {{package}} {
 
-{{#imports}}import {{import}};
+{{#imports}}
+import {{import}};
 {{/imports}}
 
 {{#models}}
 {{#model}}
     [XmlRootNode(name="{{classname}}")]
     public class {{classname}} {
-    {{#vars}}
 
-    {{#description}}/* {{description}} */
+    {{#vars}}
+    {{#description}}
+    /* {{description}} */
     {{/description}}
 
         {{#isList}}
@@ -23,7 +25,6 @@ package {{package}} {
         public var {{name}}: {{{datatype}}} = {{{defaultValue}}};
 
     {{/vars}}
-
         public function toString(): String {
             var str: String = "{{classname}}: ";
             {{#vars}}
@@ -31,10 +32,7 @@ package {{package}} {
             {{/vars}}
             return str;
         }
-
-
-}
+    }
 {{/model}}
-        {{/models}}
-
+{{/models}}
 }

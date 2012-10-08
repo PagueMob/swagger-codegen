@@ -23,6 +23,8 @@
         <!--<antcall target="cleanDir" description="clean the docs directory"/>-->
 
         <!--<antcall target="asDocs" description="full build of asdocs"/>-->
+                                                                        m
+
 
         <antcall target="buildSWC" description="build the SWC file"/>
 
