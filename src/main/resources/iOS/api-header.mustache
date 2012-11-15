@@ -1,0 +1,16 @@
+#import <Foundation/Foundation.h>
+#import <AFNetworking.h>
+
+@class {{name}};
+
+@protocol {{name}}Delegate <NSObject>
+
+@optional;
+
+@end
+
+@interface {{name}} : NSObject
+
+@property(unsafe_unretained, nonatomic) id <{{name}}Delegate> delegate;
+
+@end

@@ -1,0 +1,20 @@
+package {{package}};
+{{newline}}
+{{#imports}}import {{&import}};
+{{/imports}}
+{{newline}}
+public class {{name}} {
+{{#properties}}
+    {{newline}}
+    {{#description}}
+    /* {{&.}} */
+    {{/description}}
+    private {{#type}}{{&name}} {{/type}}{{name}}
+    public {{#type}}{{&name}} {{/type}}{{getter}}(){
+        return this.{{name}};
+    }
+    public void {{setter}}({{#type}}{{&name}} {{/type}}{{name}}){
+        this.{{name}} = {{name}};
+    }
+{{/properties}}
+}

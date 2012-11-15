@@ -1,0 +1,12 @@
+#import <Foundation/Foundation.h>
+{{#imports}}#import "{{import}}.h"
+{{/imports}}
+{{newline}}
+@interface {{name}} : NSObject
+{{newline}}
+{{#properties}}
+@property(nonatomic) {{#type}}{{&name}} {{/type}}{{name}};{{#description}} /* {{&description}} */{{/description}}
+{{newline}}
+{{/properties}}
+{{newline}}
+@end

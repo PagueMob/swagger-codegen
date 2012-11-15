@@ -1,0 +1,28 @@
+package {{package}};
+{{newline}}
+{{#imports}}import {{&import}};
+{{/imports}}
+{{newline}}
+public class {{name}}{
+{{newline}}
+    private String basePath = "{{basePath}}";
+    public String getBasePath(){
+        return this.basePath
+    }
+    public void setBasePath(String basePath){
+        this.basePath = basePath;
+    }
+{{#operations}}
+    {{newline}}
+    {{#description}}/* {{&.}} */
+    {{/description}}
+    {{#notes}}// {{&.}}
+    {{/notes}}
+    public {{#returnType}}{{name}} {{/returnType}}{{&name}}({{#parameters}}{{#type}}{{name}} {{/type}}{{name}}{{/parameters}}){
+        //{{&httpMethod}}-{{&path}}
+        {{#errors}} //Error:{{code}} - {{message}}
+        {{/errors}}
+        return null;
+    }
+{{/operations}}
+}
