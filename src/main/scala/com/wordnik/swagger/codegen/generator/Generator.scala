@@ -1,17 +1,16 @@
 package com.wordnik.swagger.codegen.generator
 
-import com.wordnik.swagger.codegen.model.{ImportInfo, PropertyInfo, ApiInfo, ModelInfo}
+import com.wordnik.swagger.codegen.model._
 import com.wordnik.swagger.codegen.util.Extractor
-import com.wordnik.swagger.core.{Documentation, DocumentationSchema}
-import java.io.File
-import scala.collection.JavaConversions._
+import com.wordnik.swagger.core._
 
 trait Generator {
+  this: GeneratorMapper with GeneratorWriter with GeneratorConfig =>
   def generate(basePath: String, apiKey: Option[String] = None)
 }
 
 trait BasicGenerator extends Generator {
-  this: GeneratorWriter with GeneratorConfig =>
+  this: GeneratorMapper with GeneratorWriter with GeneratorConfig =>
 
   final def main(args: Array[String]) {
     require(!args.isEmpty, "Need url to resources as argument")
@@ -28,10 +27,10 @@ trait BasicGenerator extends Generator {
     val modelInfos = processModels(models)
     val apiInfos = processApis(apis)
 
-    val outputPath = List(generatorDir, sourceDir).mkString(File.separator)
+    val outputPath = buildPath(destinationDir, sourceDir)
     writeTemplate(outputPath, modelTemplateFiles, modelInfos: _*)
-    //writeTemplate(outputPath, apiTemplateFiles, apiInfos: _*)
-
+    writeTemplate(outputPath, apiTemplateFiles, apiInfos: _*)
+    copySupportFile(destinationDir, supportFiles)
     println("Generated Swagger Codegen.")
   }
 
@@ -40,19 +39,23 @@ trait BasicGenerator extends Generator {
   }
 
   private def buildModelInfo(model: DocumentationSchema) = {
-    val name = model.getId()
-    val properties = buildProperties(model.getProperties().toMap)
-    val imports = buildImports(processModelImport(model))
-    new ModelInfo(name, modelPackage, modelPackage, properties, imports)
+    val properties = buildProperties(convertJavaToScala(model.getProperties()))
+    new ModelInfo(
+      mapModelName(model.getId()),
+      modelPackage,
+      properties,
+      buildImports(extractImportProperty(properties))
+    )
   }
 
   private def buildProperties(properties: Map[String, DocumentationSchema]): List[PropertyInfo] = {
     properties.map {
       case (id, p) =>
         val kind = p.getType
+        val typeRef = Option(p.getItems()).map(i => Some(i.ref)).getOrElse(None)
         new PropertyInfo(
           mapPropertyName(id, kind),
-          mapTypeName(kind),
+          mapType(kind, typeRef),
           mapGetterName(id, kind),
           mapSetterName(id, kind),
           p.getRequired(),
@@ -60,21 +63,86 @@ trait BasicGenerator extends Generator {
     }.toList
   }
 
-  private def processModelImport(model: DocumentationSchema): Set[String] = {
-    model.getProperties().toMap.map {
-      case (id, p) => p.getType
-    }.toSet
-  }
-
   private def processApis(apis: List[Documentation]): List[ApiInfo] = {
     apis.map(api => buildApiInfo(api))
   }
 
   private def buildApiInfo(api: Documentation) = {
-    new ApiInfo(api.resourcePath, apiPackage)
+    val op = convertJavaToScala(api.getApis()).map {
+      a => a.getPath -> convertJavaToScala(a.getOperations())
+    }.toMap
+    val operations = buildOperations(op)
+    new ApiInfo(
+      mapApiName(api.getResourcePath),
+      apiPackage,
+      api.getBasePath,
+      operations,
+      buildImports(extractImportOperation(operations))
+    )
   }
 
-  private def buildImports(types: Set[String]): Set[ImportInfo] = {
-    types.map(mapImport(_)).flatten.map(ImportInfo(_))
+  private def buildOperations(operations: Map[String, List[DocumentationOperation]]): List[OperationInfo] = {
+    val a = operations.map {
+      case (path, operation) =>
+        operation.map {
+          op =>
+            OperationInfo(
+              mapMethodName(op.getNickname),
+              path,
+              mapHttpMethod(op.getHttpMethod),
+              mapType(op.getResponseClass()),
+              buildParameters(convertJavaToScala(op.getParameters())),
+              buildErrors(convertJavaToScala(op.getErrorResponses())),
+              Option(op.getSummary),
+              Option(op.getNotes)
+            )
+        }
+    }.flatten.toList
+    a
+  }
+
+  private def buildParameters(parameters: List[DocumentationParameter]): List[ParameterInfo] = {
+    parameters.map {
+      p =>
+        ParameterInfo(
+          p.getName,
+          mapType(p.getDataType()),
+          p.getParamType,
+          p.getRequired,
+          p.getDefaultValue,
+          Option(p.getDescription)
+        )
+    }
+  }
+
+  private def buildErrors(errors: List[DocumentationError]): List[ErrorInfo] = {
+    errors.map(e => ErrorInfo(e.getCode, e.getReason))
+  }
+
+  private def extractImportProperty(properties: List[PropertyInfo]): List[TypeInfo] = {
+    properties.map(p => p.`type`)
+  }
+
+  private def extractImportOperation(operations: List[OperationInfo]): List[TypeInfo] = {
+    operations.map(
+      o => o.returnType :: o.parameters.map(p => p.`type`)
+    ).flatten
+  }
+
+  private def buildImports(types: List[TypeInfo]): Set[ImportInfo] = {
+    val t = types.map {
+      t => List(t.`import`) ++ t.dataRef.map(d => List(d.`import`)).getOrElse(Nil)
+    }.flatten.flatten.toSet
+    t.map(s => ImportInfo(s))
+  }
+
+  private def convertJavaToScala[T](list: java.util.List[T]): List[T] = {
+    import scala.collection.JavaConversions._
+    Option(list).map(_.toList).getOrElse(List.empty)
+  }
+
+  private def convertJavaToScala[V, K](map: java.util.Map[V, K]): Map[V, K] = {
+    import scala.collection.JavaConversions._
+    Option(map).map(_.toMap).getOrElse(Map.empty)
   }
 }

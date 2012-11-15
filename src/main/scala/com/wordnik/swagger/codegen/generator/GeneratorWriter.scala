@@ -1,7 +1,7 @@
 package com.wordnik.swagger.codegen.generator
 
+import com.wordnik.swagger.codegen.model.{SupportFile, TemplateFile, TemplateInfo}
 import com.wordnik.swagger.codegen.util.JsonUtil
-import com.wordnik.swagger.codegen.model.{TemplateFile, TemplateInfo}
 import java.io.{FileInputStream, InputStream, FileWriter, File}
 import org.fusesource.scalate.{Template, TemplateSource, TemplateEngine}
 import scala.io.Source
@@ -9,6 +9,7 @@ import scala.io.Source
 trait GeneratorWriter {
   this: GeneratorConfig =>
   def writeTemplate(outputPath: String, templateFiles: List[TemplateFile], infos: TemplateInfo*)
+  def copySupportFile(outputPath: String, files: List[SupportFile])
 }
 
 trait BasicGeneratorWriter extends GeneratorWriter {
@@ -16,14 +17,18 @@ trait BasicGeneratorWriter extends GeneratorWriter {
   private lazy val mapper = JsonUtil.mapper
   private lazy val engine = new TemplateEngine(Some(new File(".")))
 
+  def copySupportFile(outputPath: String, files: List[SupportFile]) {
+
+  }
+
   def writeTemplate(outputPath: String, templateFiles: List[TemplateFile], infos: TemplateInfo*) {
     templateFiles.foreach {
       tf =>
-        val templatePath = List(templateDir, tf.file).mkString(File.separator)
+        val templatePath = buildPath(templateDir, tf.file)
         val template = compileTemplate(templatePath)
         infos.foreach {
           i =>
-            val filePath = List(outputPath, i.path, i.name + tf.sufix).mkString(File.separator)
+            val filePath = buildPath(outputPath, tf.filePath, i.name + tf.sufix)
             val content = buildTemplate(filePath, template, i)
             writeFile(filePath, content)
         }

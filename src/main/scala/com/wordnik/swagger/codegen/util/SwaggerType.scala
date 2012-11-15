@@ -10,9 +10,7 @@ object SwaggerType {
   val String = "string"
   val Date = "Date"
   val List = "List"
-  val Set = "Map"
   val Array = "Array"
-  val Map = "Map"
-  val Object = "Object"
+  val Set = "Set"
   val Void = "void"
 }
