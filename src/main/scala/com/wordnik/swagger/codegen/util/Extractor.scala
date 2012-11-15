@@ -36,11 +36,15 @@ object Extractor {
   }
 
   private def fetch(path: String, apiKey: Option[String] = None) = {
-    path.startsWith("http") match {
-      case true =>
-        val url = path + apiKey.map(k => "?api_key=" + k).getOrElse("")
-        Source.fromURL(url).mkString
-      case false => Source.fromFile(path).mkString
+    try {
+      path.startsWith("http") match {
+        case true =>
+          val url = path + apiKey.map(k => "?api_key=" + k).getOrElse("")
+          Source.fromURL(url).mkString
+        case false => Source.fromFile(path).mkString
+      }
+    } catch {
+      case e: Exception => throw new Exception("unable to read from " + path, e)
     }
   }
 }

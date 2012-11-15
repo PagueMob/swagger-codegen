@@ -9,7 +9,7 @@ public class {{name}} {
     {{#description}}
     /* {{&.}} */
     {{/description}}
-    private {{#type}}{{&name}} {{/type}}{{name}}
+    private {{#type}}{{&name}} {{/type}}{{name}};
     public {{#type}}{{&name}} {{/type}}{{getter}}(){
         return this.{{name}};
     }
