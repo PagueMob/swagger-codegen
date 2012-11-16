@@ -17,6 +17,7 @@ trait BasicGenerator extends Generator {
     val basePath = args(0)
     val apiKey = if (args.length > 1) Some(args(1)) else None
     generate(basePath, apiKey)
+    System.exit(0)
   }
 
   final def generate(basePath: String, apiKey: Option[String] = None) {
@@ -82,7 +83,7 @@ trait BasicGenerator extends Generator {
   }
 
   private def buildOperations(operations: Map[String, List[DocumentationOperation]]): List[OperationInfo] = {
-    val a = operations.map {
+    operations.map {
       case (path, operation) =>
         operation.map {
           op =>
@@ -98,11 +99,10 @@ trait BasicGenerator extends Generator {
             )
         }
     }.flatten.toList
-    a
   }
 
   private def buildParameters(parameters: List[DocumentationParameter]): List[ParameterInfo] = {
-    parameters.map {
+    val r = parameters.map {
       p =>
         ParameterInfo(
           p.getName,
@@ -113,6 +113,7 @@ trait BasicGenerator extends Generator {
           Option(p.getDescription)
         )
     }
+    r.lastOption.map(e => r.updated(r.length-1, e.copy(hasNext = false))).getOrElse(Nil)
   }
 
   private def buildErrors(errors: List[DocumentationError]): List[ErrorInfo] = {

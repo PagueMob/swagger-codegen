@@ -14,3 +14,10 @@ object SwaggerType {
   val Set = "Set"
   val Void = "void"
 }
+
+object SwaggerParamType {
+  val Path = "path"
+  val Query = "query"
+  val Body = "body"
+  val Header = "header"
+}

@@ -22,12 +22,12 @@ class JavaGenerator extends BasicGenerator with BasicGeneratorMapper with BasicG
   )
 
   override protected def typeMapping = List(
-    TypeMapper(SwaggerType.Byte, "byte"),
-    TypeMapper(SwaggerType.Boolean, "boolean"),
-    TypeMapper(SwaggerType.Int, "int"),
-    TypeMapper(SwaggerType.Long, "long"),
-    TypeMapper(SwaggerType.Float, "float"),
-    TypeMapper(SwaggerType.Double, "double"),
+    TypeMapper(SwaggerType.Byte, "byte", isPrimitive = true),
+    TypeMapper(SwaggerType.Boolean, "boolean", isPrimitive = true),
+    TypeMapper(SwaggerType.Int, "int", isPrimitive = true),
+    TypeMapper(SwaggerType.Long, "long", isPrimitive = true),
+    TypeMapper(SwaggerType.Float, "float", isPrimitive = true),
+    TypeMapper(SwaggerType.Double, "double", isPrimitive = true),
     TypeMapper(SwaggerType.String, "String"),
     TypeMapper(SwaggerType.Date, "Date", Some("java.util")),
     TypeMapper(SwaggerType.List, "List", Some("java.util")),
@@ -37,16 +37,12 @@ class JavaGenerator extends BasicGenerator with BasicGeneratorMapper with BasicG
   )
 
   override protected def mapType(name: String, typeRef: Option[String] = None): TypeInfo = {
-    val ref = typeRef.map(t => mapType(t))
-    val n = mapTypeName(name) match {
-      case "List" => List(Some("List<"), ref.map(_.name), Some(">")).flatten.mkString
-      case "Set" => List(Some("Set<"), ref.map(_.name), Some(">")).flatten.mkString
-      case t => t
+    val t = super.mapType(name, typeRef)
+    t.name match {
+      case "List" => t.copy(name = List(Some("List<"), t.dataRef.map(_.name), Some(">")).flatten.mkString)
+      case "Set" => t.copy(name = List(Some("Set<"), t.dataRef.map(_.name), Some(">")).flatten.mkString)
+      case _ => t
     }
-    TypeInfo(n,
-      mapPackageName(name),
-      mapImport(name),
-      ref)
   }
 
   override protected def mapGetterName(name: String, dataType: String) = {

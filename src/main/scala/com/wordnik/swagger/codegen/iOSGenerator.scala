@@ -4,11 +4,11 @@ import com.wordnik.swagger.codegen.generator._
 import com.wordnik.swagger.codegen.model._
 import com.wordnik.swagger.codegen.util.SwaggerType
 
-object iOSGenerator extends iOSGenerator
+object IOSGenerator extends IOSGenerator
 
-class iOSGenerator extends BasicGenerator with BasicGeneratorMapper with BasicGeneratorWriter with BasicGeneratorConfig{
-  override protected def templateDir = "iOS"
-  override protected def destinationDir = super.destinationDir + "/iOS"
+class IOSGenerator extends BasicGenerator with BasicGeneratorMapper with BasicGeneratorWriter with BasicGeneratorConfig{
+  override protected def templateDir = "IOS"
+  override protected def destinationDir = super.destinationDir + "/IOS"
 
   protected def apiTemplateFiles = List(
     TemplateFile("api-header.mustache", ".h", Some("api")),
@@ -21,12 +21,12 @@ class iOSGenerator extends BasicGenerator with BasicGeneratorMapper with BasicGe
   )
 
   override protected def typeMapping = List(
-    TypeMapper(SwaggerType.Byte, "char"),
-    TypeMapper(SwaggerType.Boolean, "BOOL"),
-    TypeMapper(SwaggerType.Int, "int"),
-    TypeMapper(SwaggerType.Long, "long"),
-    TypeMapper(SwaggerType.Float, "float"),
-    TypeMapper(SwaggerType.Double, "double"),
+    TypeMapper(SwaggerType.Byte, "char", isPrimitive = true),
+    TypeMapper(SwaggerType.Boolean, "BOOL", isPrimitive = true),
+    TypeMapper(SwaggerType.Int, "int", isPrimitive = true),
+    TypeMapper(SwaggerType.Long, "long", isPrimitive = true),
+    TypeMapper(SwaggerType.Float, "float", isPrimitive = true),
+    TypeMapper(SwaggerType.Double, "double", isPrimitive = true),
     TypeMapper(SwaggerType.String, "NSString"),
     TypeMapper(SwaggerType.Date, "NSDate"),
     TypeMapper(SwaggerType.List, "NSArray"),
@@ -34,24 +34,8 @@ class iOSGenerator extends BasicGenerator with BasicGeneratorMapper with BasicGe
     TypeMapper(SwaggerType.Set, "NSArray"),
     TypeMapper(SwaggerType.Void, "void")
   )
-
-  lazy val primitives = List(
-    SwaggerType.Byte,
-    SwaggerType.Boolean,
-    SwaggerType.Int,
-    SwaggerType.Long,
-    SwaggerType.Float,
-    SwaggerType.Double,
-    SwaggerType.Void
-  )
-
-  override protected def mapTypeName(name: String) = {
-    typeMapping.find(_.name == name) match {
-      case Some(t) =>
-        if (primitives.contains(name)) t.nameTo
-        else t.nameTo + "*"
-      case None => name + "*"
-    }
+  override protected def mapHttpMethod(name: String): String = {
+    name.toUpperCase
   }
 
   override protected def mapGetterName(name: String, dataType: String) = {

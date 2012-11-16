@@ -1,6 +1,7 @@
 package com.wordnik.swagger.codegen.generator
 
 import com.wordnik.swagger.codegen.model.TypeInfo
+import com.wordnik.swagger.codegen.util.SwaggerType
 
 trait GeneratorMapper {
   this: GeneratorConfig =>
@@ -10,7 +11,8 @@ trait GeneratorMapper {
 
   protected def mapType(name: String, typeRef: Option[String] = None): TypeInfo
   protected def mapTypeName(name: String): String
-  protected def mapPackageName(name: String): Option[String]
+  protected def mapIsPrimitive(`type`: String): Boolean
+  protected def mapPackageName(`type`: String): Option[String]
   protected def mapImport(`type`: String): Option[String]
 
   protected def mapDefaultValue(`type`: String): Option[String]
@@ -24,6 +26,7 @@ trait GeneratorMapper {
 
 trait BasicGeneratorMapper extends GeneratorMapper {
   this: GeneratorConfig =>
+  private lazy val ListTypeRegex = """List\[(.*)\]""".r
 
   override protected def mapModelName(name: String) = name.charAt(0).toUpper + name.substring(1)
   override protected def mapApiName(name: String) = {
@@ -32,38 +35,43 @@ trait BasicGeneratorMapper extends GeneratorMapper {
   }
 
   override protected def mapType(name: String, typeRef: Option[String] = None): TypeInfo = {
-    TypeInfo(mapTypeName(name),
-      mapPackageName(name),
-      mapImport(name),
-      typeRef.map(t => mapType(t)))
-  }
-
-  override protected def mapTypeName(name: String) = {
-    typeMapping.find(_.name == name) match {
-      case Some(t) => t.nameTo
-      case None => name
+    name match {
+      case ListTypeRegex(ref) => mapType(SwaggerType.List, Some(ref))
+      case _ => TypeInfo(
+        mapTypeName(name),
+        mapPackageName(name),
+        mapImport(name),
+        mapIsPrimitive(name),
+        typeRef.map(t => mapType(t))
+      )
     }
   }
 
-  override protected def mapPackageName(`type`: String) = {
+  override protected def mapTypeName(name: String): String = {
+    typeMapping.find(_.name == name).map(_.nameTo).getOrElse(name)
+  }
+
+  override protected def mapIsPrimitive(`type`: String): Boolean = {
+    typeMapping.find(_.name == `type`).map(_.isPrimitive).getOrElse(false)
+  }
+
+  override protected def mapPackageName(`type`: String): Option[String] = {
     typeMapping.find(_.name == `type`).map(_.`package`).getOrElse(None)
   }
 
-  override protected def mapImport(`type`: String) = {
-    typeMapping.find(_.name == `type`) match {
+  override protected def mapImport(`type`: String): Option[String] = {
+    val r = typeMapping.find(_.name == `type`) match {
       case Some(t) => t.`package` match {
-          case Some(p) => Some(List(p, `type`).mkString(packageSeparator))
-          case None => None
+        case Some(p) => Some(List(p, t.nameTo).mkString(packageSeparator))
+        case None => None
       }
       case None => Some(List(modelPackage, Some(`type`)).flatten.mkString(packageSeparator))
     }
+    r
   }
 
-  override protected def mapDefaultValue(`type`: String) = {
-    typeMapping.find(_.name == `type`) match {
-      case Some(t) => t.defaultValue
-      case None => None
-    }
+  override protected def mapDefaultValue(`type`: String): Option[String] = {
+    typeMapping.find(_.name == `type`).map(_.defaultValue).getOrElse(None)
   }
 
   override protected def mapPropertyName(name: String, dataType: String) = name.charAt(0).toLower + name.substring(1)
