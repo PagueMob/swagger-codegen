@@ -1,11 +1,11 @@
 #import <Foundation/Foundation.h>
-{{#imports}}#import "{{import}}.h"
+{{#imports}}#import "{{&import}}.h"
 {{/imports}}
 {{newline}}
-@interface {{name}} : NSObject
+@interface {{&name}} : NSObject
 {{newline}}
 {{#properties}}
-@property(nonatomic) {{#type}}{{&name}} {{/type}}{{name}};{{#description}} /* {{&description}} */{{/description}}
+@property(nonatomic,{{#type}}{{#isPrimitive}}assign{{/isPrimitive}}{{^isPrimitive}}strong{{/isPrimitive}}{{/type}}) {{#type}}{{&name}} {{^isPrimitive}}* {{/isPrimitive}}{{/type}}{{&name}};{{#description}} /* {{&description}} */{{/description}}
 {{newline}}
 {{/properties}}
 {{newline}}

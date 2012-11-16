@@ -1,16 +1,28 @@
 #import <Foundation/Foundation.h>
 #import <AFNetworking.h>
-
-@class {{name}};
-
-@protocol {{name}}Delegate <NSObject>
-
+{{newline}}
+{{#imports}}#import "{{&import}}.h"
+{{/imports}}
+{{newline}}
+@class {{&name}};
+{{newline}}
+@protocol {{&name}}Delegate <NSObject>
+{{newline}}
 @optional;
-
+{{newline}}
+{{newline}}
 @end
-
-@interface {{name}} : NSObject
-
-@property(unsafe_unretained, nonatomic) id <{{name}}Delegate> delegate;
-
+{{newline}}
+@interface {{&name}} : NSObject
+{{newline}}
+@property(unsafe_unretained, nonatomic) id <{{&name}}Delegate> delegate;
+{{#operations}}
+{{newline}}
+{{#description}}/* {{&.}} */
+{{/description}}
+{{#notes}}// {{&.}}
+{{/notes}}
+- (void) {{&name}}{{#parameters}}:({{#type}}{{&name}}{{^isPrimitive}} *{{/isPrimitive}}{{/type}}){{&name}} {{/parameters}};
+{{/operations}}
+{{newline}}
 @end

@@ -1,11 +1,11 @@
-package {{package}};
+package {{&package}};
 {{newline}}
 {{#imports}}import {{&import}};
 {{/imports}}
 {{newline}}
-public class {{name}}{
+public class {{&name}}{
 {{newline}}
-    private String basePath = "{{basePath}}";
+    private String basePath = "{{&basePath}}";
     public String getBasePath(){
         return this.basePath
     }
@@ -18,9 +18,9 @@ public class {{name}}{
     {{/description}}
     {{#notes}}// {{&.}}
     {{/notes}}
-    public {{#returnType}}{{name}} {{/returnType}}{{&name}}({{#parameters}}{{#type}}{{name}} {{/type}}{{name}}{{/parameters}}){
+    public {{#returnType}}{{&name}} {{/returnType}}{{&name}}({{#parameters}}{{#type}}{{&name}} {{/type}}{{&name}}{{#hasNext}}, {{/hasNext}}{{/parameters}}){
         //{{&httpMethod}}-{{&path}}
-        {{#errors}} //Error:{{code}} - {{message}}
+        {{#errors}} //Error:{{code}} - {{&message}}
         {{/errors}}
         return null;
     }

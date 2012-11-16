@@ -1,4 +1,4 @@
-package {{package}};
+package {{&package}};
 {{newline}}
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -6,12 +6,12 @@ import org.springframework.web.client.RestTemplate;
 import com.googlecode.androidannotations.annotations.rest.*;
 import com.googlecode.androidannotations.api.rest.MediaType;
 {{newline}}
-{{#imports}}import {{import}};
+{{#imports}}import {{&import}};
 {{/imports}}
 {{newline}}
 @Accept(MediaType.APPLICATION_JSON)
-@Rest(rootUrl="{{basePath}}",converters={GsonHttpMessageConverter.class})
-public interface {{name}} {
+@Rest(rootUrl="{{&basePath}}",converters={GsonHttpMessageConverter.class})
+public interface {{&name}} {
     {{newline}}
     RestTemplate getRestTemplate();
     {{newline}}
@@ -22,7 +22,7 @@ public interface {{name}} {
     {{/description}}
     {{#notes}}// {{&.}}
     {{/notes}}
-    @{{httpMethod}}("{{&path}}")
-    {{#returnType}}{{name}} {{/returnType}}{{&name}}({{#parameters}}{{#type}}{{name}} {{/type}}{{name}}{{/parameters}});
+    @{{&httpMethod}}("{{&path}}")
+    {{#returnType}}{{&name}} {{/returnType}}{{&name}}({{#parameters}}{{#type}}{{&name}} {{/type}}{{&name}}{{#hasNext}}, {{/hasNext}}{{/parameters}});
 {{/operations}}
 }

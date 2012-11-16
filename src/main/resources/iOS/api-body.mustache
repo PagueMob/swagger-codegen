@@ -1,5 +1,20 @@
-#import <{{name}}.h>
-
-@implementation {{name}};
-
+#import <{{&name}}.h>
+{{newline}}
+@implementation {{&name}};
+{{newline}}
+static NSURL *basePath = [NSURL URLWithString:@"{{basePath}}"];
+{{#operations}}
+{{newline}}
+- (void) {{&name}}{{#parameters}}:({{#type}}{{&name}}{{^isPrimitive}} *{{/isPrimitive}}{{/type}}){{&name}} {{/parameters}}{
+    {{#errors}} //Error:{{code}} - {{&message}}
+    {{/errors}}
+    {{newline}}
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:basePath];
+    {{newline}}
+    NSMutableDictionary * parameters = [[NSMutableDictionary alloc] init];
+    {{newline}}
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"{{&httpMethod}}" path:@"{{&path}}" parameters:parameters];
+}
+{{/operations}}
+{{newline}}
 @end
