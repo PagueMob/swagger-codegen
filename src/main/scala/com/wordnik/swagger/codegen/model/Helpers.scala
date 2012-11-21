@@ -2,24 +2,6 @@ package com.wordnik.swagger.codegen.model
 
 import com.wordnik.swagger.codegen.util.SwaggerParamType
 
-case class TemplateFile(file: String,
-                        sufix: String,
-                        filePath: Option[String] = None)
-
-case class SupportFile(file: String,
-                       name: String,
-                       filePath: Option[String] = None)
-
-case class TypeMapper(name: String,
-                      nameTo: String,
-                      `package`: Option[String] = None,
-                      defaultValue: Option[String] = None,
-                      isPrimitive: Boolean = false)
-
-trait TemplateInfo {
-  def name: String
-}
-
 case class ModelInfo(name: String,
                      `package`: Option[String],
                      properties: List[PropertyInfo],
@@ -46,7 +28,19 @@ case class PropertyInfo(name: String,
                         getter: String,
                         setter: String,
                         required: Boolean,
-                        description: Option[String] = None)
+                        description: Option[String] = None
+                         ) extends ListNode
+
+case class ParameterInfo(name: String,
+                         `type`: TypeInfo,
+                         paramType: String,
+                         required: Boolean,
+                         defaultValue: Option[String] = None,
+                         description: Option[String] = None
+                          ) extends ListNode
+
+case class ErrorInfo(code: Int,
+                     message: String)
 
 case class OperationInfo(name: String,
                          path: String,
@@ -62,21 +56,6 @@ case class OperationInfo(name: String,
   lazy val headerParams = filterParameters(SwaggerParamType.Header)
 
   private def filterParameters(paramType: String) = {
-    val r = parameters.filter(_.paramType == paramType)
-    r.headOption.map(_.hasPrev = false)
-    r.lastOption.map(_.hasNext = false)
-    r
+    ListNode.updateNodes(parameters.filter(_.paramType == paramType))
   }
 }
-
-case class ParameterInfo(name: String,
-                         `type`: TypeInfo,
-                         paramType: String,
-                         required: Boolean,
-                         defaultValue: Option[String] = None,
-                         description: Option[String] = None,
-                         var hasPrev: Boolean = true,
-                         var hasNext: Boolean = true)
-
-case class ErrorInfo(code: Int,
-                     message: String)

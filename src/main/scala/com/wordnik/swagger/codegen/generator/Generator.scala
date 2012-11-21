@@ -44,7 +44,7 @@ trait BasicGenerator extends Generator {
     new ModelInfo(
       mapModelName(model.getId()),
       modelPackage,
-      properties,
+      ListNode.updateNodes(properties),
       buildImports(extractImportProperty(properties))
     )
   }
@@ -92,7 +92,7 @@ trait BasicGenerator extends Generator {
               path,
               mapHttpMethod(op.getHttpMethod),
               mapType(op.getResponseClass()),
-              buildParameters(convertJavaToScala(op.getParameters())),
+              ListNode.updateNodes(buildParameters(convertJavaToScala(op.getParameters()))),
               buildErrors(convertJavaToScala(op.getErrorResponses())),
               Option(op.getSummary),
               Option(op.getNotes)
@@ -102,7 +102,7 @@ trait BasicGenerator extends Generator {
   }
 
   private def buildParameters(parameters: List[DocumentationParameter]): List[ParameterInfo] = {
-    val r = parameters.map {
+    parameters.map {
       p =>
         ParameterInfo(
           p.getName,
@@ -113,9 +113,6 @@ trait BasicGenerator extends Generator {
           Option(p.getDescription)
         )
     }
-    r.lastOption.map(_.hasNext = false)
-    r.headOption.map(_.hasPrev = false)
-    r
   }
 
   private def buildErrors(errors: List[DocumentationError]): List[ErrorInfo] = {

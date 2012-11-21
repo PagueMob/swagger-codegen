@@ -9,7 +9,7 @@ object JavaGenerator extends JavaGenerator
 
 class JavaGenerator extends BasicGenerator with BasicGeneratorMapper with BasicGeneratorWriter with BasicGeneratorConfig {
   override protected def templateDir = "Java"
-  override protected def destinationDir = super.destinationDir + "/java"
+  override protected def destinationDir = super.destinationDir + "/Java"
   override protected def apiPackage = Some("com.swagger.api")
   override protected def modelPackage = Some("com.swagger.model")
 
