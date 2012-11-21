@@ -56,14 +56,16 @@ case class OperationInfo(name: String,
                          errorResponses: List[ErrorInfo],
                          description: Option[String] = None,
                          notes: Option[String] = None) {
-  lazy val pathParameters = filterParameters(SwaggerParamType.Path)
-  lazy val queryParameters = filterParameters(SwaggerParamType.Query)
-  lazy val bodyParameters = filterParameters(SwaggerParamType.Body)
-  lazy val headerParameters = filterParameters(SwaggerParamType.Header)
+  lazy val pathParams = filterParameters(SwaggerParamType.Path)
+  lazy val queryParams = filterParameters(SwaggerParamType.Query)
+  lazy val bodyParams = filterParameters(SwaggerParamType.Body)
+  lazy val headerParams = filterParameters(SwaggerParamType.Header)
 
   private def filterParameters(paramType: String) = {
-    val r = parameters.filter(_.paramType == SwaggerParamType.Path)
-    r.lastOption.map(e => r.updated(r.length-1, e.copy(hasNext = false))).getOrElse(Nil)
+    val r = parameters.filter(_.paramType == paramType)
+    r.headOption.map(_.hasPrev = false)
+    r.lastOption.map(_.hasNext = false)
+    r
   }
 }
 
@@ -73,7 +75,8 @@ case class ParameterInfo(name: String,
                          required: Boolean,
                          defaultValue: Option[String] = None,
                          description: Option[String] = None,
-                         hasNext: Boolean = true)
+                         var hasPrev: Boolean = true,
+                         var hasNext: Boolean = true)
 
 case class ErrorInfo(code: Int,
                      message: String)

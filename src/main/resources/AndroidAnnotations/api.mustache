@@ -1,28 +1,29 @@
-package {{&package}};
-{{newline}}
+{{=[{ }]=}}
+package [{&package}];
+[{newline}]
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-{{newline}}
+[{newline}]
 import com.googlecode.androidannotations.annotations.rest.*;
 import com.googlecode.androidannotations.api.rest.MediaType;
-{{newline}}
-{{#imports}}import {{&import}};
-{{/imports}}
-{{newline}}
+[{newline}]
+[{#imports}]import [{&import}];
+[{/imports}]
+[{newline}]
 @Accept(MediaType.APPLICATION_JSON)
-@Rest(rootUrl="{{&basePath}}",converters={GsonHttpMessageConverter.class})
-public interface {{&name}} {
-    {{newline}}
+@Rest(rootUrl="[{&basePath}]",converters={GsonHttpMessageConverter.class})
+public interface [{&name}] {
+    [{newline}]
     RestTemplate getRestTemplate();
-    {{newline}}
+    [{newline}]
     void setRootUrl(String rootUrl);
-{{#operations}}
-    {{newline}}
-    {{#description}}/* {{&.}} */
-    {{/description}}
-    {{#notes}}// {{&.}}
-    {{/notes}}
-    @{{&httpMethod}}("{{&path}}")
-    {{#returnType}}{{&name}} {{/returnType}}{{&name}}({{#parameters}}{{#type}}{{&name}} {{/type}}{{&name}}{{#hasNext}}, {{/hasNext}}{{/parameters}});
-{{/operations}}
+    [{#operations}]
+    [{newline}]
+    [{#description}]/* [{&.}] */
+    [{/description}]
+    [{#notes}]// [{&.}]
+    [{/notes}]
+    @[{&httpMethod}]("[{&path}][{#queryParams}][{^hasPrev}]?[{/hasPrev}][{name}]={[{name}]}[{#hasNext}]&[{/hasNext}][{/queryParams}]")
+    [{#returnType}][{&name}] [{/returnType}][{&name}]([{#parameters}][{#type}][{&name}] [{/type}][{&name}][{#hasNext}], [{/hasNext}][{/parameters}]);
+[{/operations}]
 }

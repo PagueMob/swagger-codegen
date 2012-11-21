@@ -113,7 +113,9 @@ trait BasicGenerator extends Generator {
           Option(p.getDescription)
         )
     }
-    r.lastOption.map(e => r.updated(r.length-1, e.copy(hasNext = false))).getOrElse(Nil)
+    r.lastOption.map(_.hasNext = false)
+    r.headOption.map(_.hasPrev = false)
+    r
   }
 
   private def buildErrors(errors: List[DocumentationError]): List[ErrorInfo] = {
