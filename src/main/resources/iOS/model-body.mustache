@@ -2,4 +2,30 @@
 {{newline}}
 @implementation {{&name}}
 {{newline}}
+- (id) initWithValues: (NSDictionary*)dict {
+    {{#properties}}
+    {{newline}}
+    {{#type}}
+        {{^isComplex}}[self {{&setter}}:[dict objectForKey:@"{{&propertyName}}"]];{{/isComplex}}
+        {{#isComplex}}[self {{&setter}}:[[[{{&typeName}} alloc] init] initWithValues:[dict objectForKey:@"{{&propertyName}}"]]];{{/isComplex}}
+    {{/type}}
+    {{/properties}}
+    {{newline}}
+    return self;
+}
+{{newline}}
+- (NSDictionary*) asDictionary{
+    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+    {{#properties}}
+    {{newline}}
+    {{#type}}
+    {{^isComplex}}if([self {{&propertyName}}] != nil) [dict setObject:[self {{&propertyName}}] forKey:@"{{&propertyName}}"];{{/isComplex}}
+    {{#isComplex}}if([self {{&propertyName}}] != nil) [dict setObject:[[self {{&propertyName}}] asDictionary] forKey:@"{{&propertyName}}"];{{/isComplex}}
+    {{#isContainer}}//container {{&propertyName}};{{/isContainer}}
+    {{/type}}
+    {{/properties}}
+    {{newline}}
+    return dict;
+}
+{{newline}}
 @end

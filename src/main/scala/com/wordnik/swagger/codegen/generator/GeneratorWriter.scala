@@ -18,7 +18,12 @@ trait BasicGeneratorWriter extends GeneratorWriter {
   private lazy val engine = new TemplateEngine(Some(new File(".")))
 
   def copySupportFile(outputPath: String, files: List[SupportFile]) {
-
+    files.foreach {
+      f =>
+        val supportPath = buildPath(templateDir, f.file)
+        val filePath = buildPath(outputPath, f.filePath, f.file)
+        writeFile(filePath, readFile(supportPath))
+    }
   }
 
   def writeTemplate(outputPath: String, templateFiles: List[TemplateFile], infos: TemplateInfo*) {
@@ -36,7 +41,7 @@ trait BasicGeneratorWriter extends GeneratorWriter {
   }
 
   private def compileTemplate(path: String) = {
-    val source = TemplateSource.fromText(path, getTemplateText(path))
+    val source = TemplateSource.fromText(path, readFile(path))
     engine.compile(source)
   }
 
@@ -50,7 +55,7 @@ trait BasicGeneratorWriter extends GeneratorWriter {
     mapper.readValue(json, classOf[Map[String, Any]])
   }
 
-  private def getTemplateText(path: String): String = {
+  private def readFile(path: String): String = {
     val is = getClass.getClassLoader.getResourceAsStream(path) match {
       case is: InputStream => is
       case _ => new FileInputStream(path)

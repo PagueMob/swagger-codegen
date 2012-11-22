@@ -20,29 +20,32 @@ class IOSGenerator extends BasicGenerator with BasicGeneratorMapper with BasicGe
     TemplateFile("model-body.mustache", ".m", Some("model"))
   )
 
+  override protected def supportFiles = List(
+    SupportFile("SWObject.h",Some(sourceDir+"/model")),
+    SupportFile("SWObject.m",Some(sourceDir+"/model"))
+  )
+
   override protected def typeMapping = List(
     TypeMapper(SwaggerType.Byte, "char", isPrimitive = true),
     TypeMapper(SwaggerType.Boolean, "BOOL", isPrimitive = true),
-    TypeMapper(SwaggerType.Int, "int", isPrimitive = true),
-    TypeMapper(SwaggerType.Long, "long", isPrimitive = true),
-    TypeMapper(SwaggerType.Float, "float", isPrimitive = true),
-    TypeMapper(SwaggerType.Double, "double", isPrimitive = true),
+    TypeMapper(SwaggerType.Int, "NSNumber"),
+    TypeMapper(SwaggerType.Long, "NSNumber"),
+    TypeMapper(SwaggerType.Float, "NSNumber"),
+    TypeMapper(SwaggerType.Double, "NSNumber"),
     TypeMapper(SwaggerType.String, "NSString"),
     TypeMapper(SwaggerType.Date, "NSDate"),
-    TypeMapper(SwaggerType.List, "NSArray"),
-    TypeMapper(SwaggerType.Array, "NSArray"),
-    TypeMapper(SwaggerType.Set, "NSArray"),
+    TypeMapper(SwaggerType.List, "NSArray", isContainer = true),
+    TypeMapper(SwaggerType.Array, "NSArray", isContainer = true),
+    TypeMapper(SwaggerType.Set, "NSArray", isContainer = true),
     TypeMapper(SwaggerType.Void, "void")
   )
+
   override protected def mapHttpMethod(name: String): String = {
     name.toUpperCase
   }
 
   override protected def mapGetterName(name: String, dataType: String) = {
-    val base = dataType match {
-      case SwaggerType.Boolean => "is"
-      case _ => "get"
-    }
+    val base = "get"
     base + name(0).toUpper + name.substring(1)
   }
 

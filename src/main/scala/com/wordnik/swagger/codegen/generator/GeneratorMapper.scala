@@ -11,9 +11,13 @@ trait GeneratorMapper {
 
   protected def mapType(name: String, typeRef: Option[String] = None): TypeInfo
   protected def mapTypeName(name: String): String
-  protected def mapIsPrimitive(`type`: String): Boolean
   protected def mapPackageName(`type`: String): Option[String]
   protected def mapImport(`type`: String): Option[String]
+
+  protected def mapIsPrimitive(`type`: String): Boolean
+  protected def mapIsComplex(`type`: String): Boolean
+  protected def mapIsContainer(`type`: String): Boolean
+
 
   protected def mapDefaultValue(`type`: String): Option[String]
   protected def mapPropertyName(name: String, dataType: String): String
@@ -21,6 +25,7 @@ trait GeneratorMapper {
   protected def mapSetterName(name: String, dataType: String): String
 
   protected def mapMethodName(name: String): String
+  protected def mapReturnName(`type`:String):String
   protected def mapHttpMethod(name: String): String
 }
 
@@ -42,6 +47,8 @@ trait BasicGeneratorMapper extends GeneratorMapper {
         mapPackageName(name),
         mapImport(name),
         mapIsPrimitive(name),
+        mapIsComplex(name),
+        mapIsContainer(name),
         typeRef.map(t => mapType(t))
       )
     }
@@ -53,6 +60,14 @@ trait BasicGeneratorMapper extends GeneratorMapper {
 
   override protected def mapIsPrimitive(`type`: String): Boolean = {
     typeMapping.find(_.name == `type`).map(_.isPrimitive).getOrElse(false)
+  }
+
+  override protected def mapIsComplex(`type`: String): Boolean = {
+    typeMapping.find(_.name == `type`).map(_.isComplex).getOrElse(true)
+  }
+
+  override protected def mapIsContainer(`type`: String): Boolean = {
+    typeMapping.find(_.name == `type`).map(_.isContainer).getOrElse(false)
   }
 
   override protected def mapPackageName(`type`: String): Option[String] = {
@@ -76,5 +91,6 @@ trait BasicGeneratorMapper extends GeneratorMapper {
 
   override protected def mapPropertyName(name: String, dataType: String) = name.charAt(0).toLower + name.substring(1)
   override protected def mapMethodName(name: String) = name.charAt(0).toLower + name.substring(1)
+  override protected def mapReturnName(name: String) = name.charAt(0).toLower + name.substring(1)
   override protected def mapHttpMethod(name: String) = name.toLowerCase
 }

@@ -9,7 +9,12 @@
 @protocol {{&name}}Delegate <NSObject>
 {{newline}}
 @optional;
+{{#operations}}
 {{newline}}
+- (void) {{&operationName}}Sucess{{#return}}{{#hasReturn}}:({{#type}}{{&typeName}}{{^isPrimitive}}*{{/isPrimitive}}){{&returnName}}{{/type}}{{/hasReturn}}{{/return}};
+{{/operations}}
+{{newline}}
+- (void) onError:(NSURLRequest*)request :(NSHTTPURLResponse*)response :(NSError*)error;
 {{newline}}
 @end
 {{newline}}
@@ -22,7 +27,7 @@
 {{/description}}
 {{#notes}}// {{&.}}
 {{/notes}}
-- (void) {{&name}}{{#parameters}}:({{#type}}{{&name}}{{^isPrimitive}} *{{/isPrimitive}}{{/type}}){{&name}} {{/parameters}};
+- (void) {{&operationName}}{{#parameters}}:({{#type}}{{&typeName}}{{^isPrimitive}} *{{/isPrimitive}}{{/type}}){{&parameterName}} {{/parameters}};
 {{/operations}}
 {{newline}}
 @end

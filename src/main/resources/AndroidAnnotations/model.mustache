@@ -8,22 +8,36 @@ public class {{&name}} {
     {{#properties}}
     {{#description}}/* {{&.}} */
     {{/description}}
-    private {{#type}}{{&name}} {{/type}}{{&name}};
+    private {{#type}}{{&typeName}} {{/type}}{{&propertyName}};
     {{/properties}}
     {{newline}}
-    public {{&name}}({{#properties}}{{#type}}{{&name}} {{/type}}{{&name}}{{#hasNext}}, {{/hasNext}}{{/properties}}) {
-        {{#properties}}
-        this.{{&name}} = {{&name}};
-        {{/properties}}
+    public {{&name}}() {
+    }
+    {{newline}}
+    public {{&name}}({{#properties}}{{#type}}{{&typeName}} {{/type}}{{&propertyName}}{{#hasNext}}, {{/hasNext}}{{/properties}}) {
+    {{#properties}}
+        this.{{&propertyName}} = {{&propertyName}};
+    {{/properties}}
     }
     {{#properties}}
     {{newline}}
-    public {{#type}}{{&name}} {{/type}}{{&getter}}() {
-        return this.{{&name}};
+    public {{#type}}{{&typeName}} {{/type}}{{&getter}}() {
+        return this.{{&propertyName}};
     }
     {{newline}}
-    public void {{&setter}}({{#type}}{{&name}} {{/type}}{{&name}}) {
-        this.{{&name}} = {{&name}};
+    public void {{&setter}}({{#type}}{{&typeName}} {{/type}}{{&propertyName}}) {
+        this.{{&propertyName}} = {{&propertyName}};
     }
 {{/properties}}
+{{newline}}
+    @Override
+    public String toString()  {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class {{&name}} {\n");
+        {{#properties}}
+        sb.append("  {{&propertyName}}: ").append({{&propertyName}}).append("\n");
+        {{/properties}}
+        sb.append("}\n");
+        return sb.toString();
+    }
 }

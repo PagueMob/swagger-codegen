@@ -28,19 +28,19 @@ class JavaGenerator extends BasicGenerator with BasicGeneratorMapper with BasicG
     TypeMapper(SwaggerType.Long, "long", isPrimitive = true),
     TypeMapper(SwaggerType.Float, "float", isPrimitive = true),
     TypeMapper(SwaggerType.Double, "double", isPrimitive = true),
-    TypeMapper(SwaggerType.String, "String"),
-    TypeMapper(SwaggerType.Date, "Date", Some("java.util")),
-    TypeMapper(SwaggerType.List, "List", Some("java.util")),
-    TypeMapper(SwaggerType.Array, "List", Some("java.util")),
-    TypeMapper(SwaggerType.Set, "Set", Some("java.util")),
-    TypeMapper(SwaggerType.Void, "void")
+    TypeMapper(SwaggerType.String, "String", isPrimitive = true),
+    TypeMapper(SwaggerType.Date, "Date", Some("java.util"), isContainer = true),
+    TypeMapper(SwaggerType.List, "List", Some("java.util"), isContainer = true),
+    TypeMapper(SwaggerType.Array, "List", Some("java.util"), isContainer = true),
+    TypeMapper(SwaggerType.Set, "Set", Some("java.util"), isContainer = true),
+    TypeMapper(SwaggerType.Void, "void", isPrimitive = true)
   )
 
   override protected def mapType(name: String, typeRef: Option[String] = None): TypeInfo = {
     val t = super.mapType(name, typeRef)
-    t.name match {
-      case "List" => t.copy(name = List(Some("List<"), t.dataRef.map(_.name), Some(">")).flatten.mkString)
-      case "Set" => t.copy(name = List(Some("Set<"), t.dataRef.map(_.name), Some(">")).flatten.mkString)
+    t.typeName match {
+      case "List" => t.copy(typeName = List(Some("List<"), t.dataRef.map(_.typeName), Some(">")).flatten.mkString)
+      case "Set" => t.copy(typeName = List(Some("Set<"), t.dataRef.map(_.typeName), Some(">")).flatten.mkString)
       case _ => t
     }
   }

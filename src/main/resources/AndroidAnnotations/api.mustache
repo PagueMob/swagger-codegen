@@ -23,7 +23,7 @@ public interface [{&name}] {
     [{/description}]
     [{#notes}]// [{&.}]
     [{/notes}]
-    @[{&httpMethod}]("[{&path}][{#queryParams}][{^hasPrev}]?[{/hasPrev}][{name}]={[{name}]}[{#hasNext}]&[{/hasNext}][{/queryParams}]")
-    [{#returnType}][{&name}] [{/returnType}][{&name}]([{#parameters}][{#type}][{&name}] [{/type}][{&name}][{#hasNext}], [{/hasNext}][{/parameters}]);
+    @[{&httpMethod}]("[{&path}][{#queryParams}][{^hasPrev}]?[{/hasPrev}][{parameterName}]={[{parameterName}]}[{#hasNext}]&[{/hasNext}][{/queryParams}]")
+    [{#return}][{#type}][{&typeName}] [{/type}][{/return}][{&operationName}]([{#parameters}][{#type}][{&typeName}] [{/type}][{&parameterName}][{#hasNext}], [{/hasNext}][{/parameters}]);
 [{/operations}]
 }

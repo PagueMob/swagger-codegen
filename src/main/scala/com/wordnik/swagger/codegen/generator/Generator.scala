@@ -1,7 +1,7 @@
 package com.wordnik.swagger.codegen.generator
 
 import com.wordnik.swagger.codegen.model._
-import com.wordnik.swagger.codegen.util.Extractor
+import com.wordnik.swagger.codegen.util.{SwaggerType, Extractor}
 import com.wordnik.swagger.core._
 
 trait Generator {
@@ -44,7 +44,7 @@ trait BasicGenerator extends Generator {
     new ModelInfo(
       mapModelName(model.getId()),
       modelPackage,
-      ListNode.updateNodes(properties),
+      IterableNode.updateNodes(properties),
       buildImports(extractImportProperty(properties))
     )
   }
@@ -91,8 +91,8 @@ trait BasicGenerator extends Generator {
               mapMethodName(op.getNickname),
               path,
               mapHttpMethod(op.getHttpMethod),
-              mapType(op.getResponseClass()),
-              ListNode.updateNodes(buildParameters(convertJavaToScala(op.getParameters()))),
+              buildReturn(op.getResponseClass()),
+              IterableNode.updateNodes(buildParameters(convertJavaToScala(op.getParameters()))),
               buildErrors(convertJavaToScala(op.getErrorResponses())),
               Option(op.getSummary),
               Option(op.getNotes)
@@ -115,6 +115,13 @@ trait BasicGenerator extends Generator {
     }
   }
 
+  private def buildReturn(`type`: String): ReturnInfo = {
+    ReturnInfo(
+      mapReturnName(`type`),
+      mapType(`type`),
+      SwaggerType.Void != `type`
+    )
+  }
   private def buildErrors(errors: List[DocumentationError]): List[ErrorInfo] = {
     errors.map(e => ErrorInfo(e.getCode, e.getReason))
   }
@@ -125,7 +132,7 @@ trait BasicGenerator extends Generator {
 
   private def extractImportOperation(operations: List[OperationInfo]): List[TypeInfo] = {
     operations.map(
-      o => o.returnType :: o.parameters.map(p => p.`type`)
+      o => o.`return`.`type` :: o.parameters.map(p => p.`type`)
     ).flatten
   }
 

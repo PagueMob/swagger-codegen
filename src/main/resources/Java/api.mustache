@@ -18,7 +18,7 @@ public class {{&name}}{
     {{/description}}
     {{#notes}}// {{&.}}
     {{/notes}}
-    public {{#returnType}}{{&name}} {{/returnType}}{{&name}}({{#parameters}}{{#type}}{{&name}} {{/type}}{{&name}}{{#hasNext}}, {{/hasNext}}{{/parameters}}){
+    public {{#return}}{{#type}}{{&typeName}} {{/type}}{{/return}}{{&operationName}}({{#parameters}}{{#type}}{{&typeName}} {{/type}}{{&paramenterName}}{{#hasNext}}, {{/hasNext}}{{/parameters}}){
         //{{&httpMethod}}-{{&path}}
         {{#errors}} //Error:{{code}} - {{&message}}
         {{/errors}}

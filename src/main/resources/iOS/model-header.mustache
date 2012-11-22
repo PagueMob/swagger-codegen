@@ -1,12 +1,12 @@
 #import <Foundation/Foundation.h>
+#import "SWObject.h"
 {{#imports}}#import "{{&import}}.h"
 {{/imports}}
 {{newline}}
-@interface {{&name}} : NSObject
-{{newline}}
+@interface {{&name}} : SWObject
 {{#properties}}
-@property(nonatomic,{{#type}}{{#isPrimitive}}assign{{/isPrimitive}}{{^isPrimitive}}strong{{/isPrimitive}}{{/type}}) {{#type}}{{&name}} {{^isPrimitive}}* {{/isPrimitive}}{{/type}}{{&name}};{{#description}} /* {{&description}} */{{/description}}
 {{newline}}
+@property(nonatomic,{{#type}}{{#isPrimitive}}assign{{/isPrimitive}}{{^isPrimitive}}strong{{/isPrimitive}}{{/type}}) {{#type}}{{&typeName}} {{^isPrimitive}}* {{/isPrimitive}}{{/type}}{{&propertyName}};{{#description}} /* {{&description}} */{{/description}}
 {{/properties}}
 {{newline}}
 @end

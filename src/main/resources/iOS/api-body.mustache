@@ -1,20 +1,54 @@
-#import <{{&name}}.h>
-{{newline}}
-@implementation {{&name}};
-{{newline}}
-static NSURL *basePath = [NSURL URLWithString:@"{{basePath}}"];
-{{#operations}}
-{{newline}}
-- (void) {{&name}}{{#parameters}}:({{#type}}{{&name}}{{^isPrimitive}} *{{/isPrimitive}}{{/type}}){{&name}} {{/parameters}}{
-    {{#errors}} //Error:{{code}} - {{&message}}
-    {{/errors}}
-    {{newline}}
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:basePath];
-    {{newline}}
-    NSMutableDictionary * parameters = [[NSMutableDictionary alloc] init];
-    {{newline}}
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"{{&httpMethod}}" path:@"{{&path}}" parameters:parameters];
+{{=[{ }]=}}
+#import "[{&name}].h"
+[{newline}]
+@implementation [{&name}];
+[{newline}]
+static NSString *basePath = @"[{basePath}]";
+[{#operations}]
+[{newline}]
+- (void) [{&operationName}][{#parameters}]:([{#type}][{&typeName}][{^isPrimitive}] *[{/isPrimitive}][{/type}])[{&parameterName}] [{/parameters}]{
+    [{#errors}] //Error:[{code}] - [{&message}]
+    [{/errors}]
+    [{newline}]
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:basePath]];
+    httpClient.parameterEncoding = AFJSONParameterEncoding;
+    [{newline}]
+    NSMutableString* path = [NSMutableString stringWithFormat:@"[{&path}]"];
+    [{#pathParams}]
+    [{newline}]
+    [path replaceCharactersInRange: [path rangeOfString:@"{[{&parameterName}]}"] withString:[{&parameterName}]];
+    [{/pathParams}]
+    [{#queryParams}]
+    [{newline}]
+    [path appendString:@"[{^hasPrev}]?[{/hasPrev}][{#hasPrev}]&[{/hasPrev}][{&parameterName}]="];
+    [path appendString:[NSString stringWithFormat:@"%@",[{&parameterName}]]];
+    [{/queryParams}]
+    [{newline}]
+    NSDictionary * parameters = nil;
+    [{#bodyParams}]
+    parameters = [[{&parameterName}] asDictionary];
+    [{/bodyParams}]
+    [{newline}]
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"[{&httpMethod}]" path:path parameters:parameters];
+    [{newline}]
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id dataResponse) {
+        if ([self delegate]) {
+            if ([[self delegate] respondsToSelector:@selector([{&operationName}]Sucess:)]) {
+                [{#return}][{#hasReturn}]id result = [[[[{#type}][{&typeName}] [{/type}]alloc] init] initWithValues:dataResponse];[{/hasReturn}][{/return}]
+                [{newline}]
+                [[self delegate] [{&operationName}]Sucess[{#return}][{#hasReturn}]:result[{/hasReturn}][{/return}]];
+            }
+        }
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id dataResponse) {
+        NSLog(@"[{&operationName}] Failure : %@", error);
+        if ([self delegate]) {
+            if ([[self delegate] respondsToSelector:@selector(onError:)]) {
+                [[self delegate] onError:request:response:error];
+            }
+        }
+    }];
+    [operation start];
 }
-{{/operations}}
-{{newline}}
+[{/operations}]
+[{newline}]
 @end
