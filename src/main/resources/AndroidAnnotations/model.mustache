@@ -15,9 +15,9 @@ public class {{&name}} {
     }
     {{newline}}
     public {{&name}}({{#properties}}{{#type}}{{&typeName}} {{/type}}{{&propertyName}}{{#hasNext}}, {{/hasNext}}{{/properties}}) {
-    {{#properties}}
+        {{#properties}}
         this.{{&propertyName}} = {{&propertyName}};
-    {{/properties}}
+        {{/properties}}
     }
     {{#properties}}
     {{newline}}

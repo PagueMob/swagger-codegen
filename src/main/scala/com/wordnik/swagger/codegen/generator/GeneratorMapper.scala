@@ -35,7 +35,7 @@ trait BasicGeneratorMapper extends GeneratorMapper {
 
   override protected def mapModelName(name: String) = name.charAt(0).toUpper + name.substring(1)
   override protected def mapApiName(name: String) = {
-    val n = "[^a-zA-Z]".r.replaceAllIn(name, "")
+    val n = name.split("/").last
     n.charAt(0).toUpper + n.substring(1) + "Api"
   }
 
