@@ -4,7 +4,7 @@
 - (id) initWithValues: (NSDictionary*)dict {
     return self;
 }
-- (NSDictionary*) asDictionary{
+- (NSDictionary*) toDictionary{
     return [NSDictionary init];
 }
 @end

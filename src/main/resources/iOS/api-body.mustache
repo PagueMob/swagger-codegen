@@ -13,10 +13,10 @@ static NSString *basePath = @"[{basePath}]";
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:basePath]];
     httpClient.parameterEncoding = AFJSONParameterEncoding;
     [{newline}]
-    NSMutableString* path = [NSMutableString stringWithFormat:@"[{&path}]"];
+    NSMutableString *path = [NSMutableString stringWithFormat:@"[{&path}]"];
     [{#pathParams}]
     [{newline}]
-    [path replaceCharactersInRange: [path rangeOfString:@"{[{&parameterName}]}"] withString:[{&parameterName}]];
+    [path replaceCharactersInRange: [path rangeOfString:@"{[{&parameterName}]}"] withString:[NSString stringWithFormat:@"%@",[{&parameterName}]]];
     [{/pathParams}]
     [{#queryParams}]
     [{newline}]
@@ -24,9 +24,9 @@ static NSString *basePath = @"[{basePath}]";
     [path appendString:[NSString stringWithFormat:@"%@",[{&parameterName}]]];
     [{/queryParams}]
     [{newline}]
-    NSDictionary * parameters = nil;
+    NSDictionary *parameters = nil;
     [{#bodyParams}]
-    parameters = [[{&parameterName}] asDictionary];
+    parameters = [[{&parameterName}] toDictionary];
     [{/bodyParams}]
     [{newline}]
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"[{&httpMethod}]" path:path parameters:parameters];

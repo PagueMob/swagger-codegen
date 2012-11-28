@@ -4,6 +4,6 @@
 
 - (id) initWithValues: (NSDictionary*)dict;
 
-- (NSDictionary*) asDictionary;
+- (NSDictionary*) toDictionary;
 
 @end

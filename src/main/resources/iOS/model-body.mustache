@@ -14,13 +14,13 @@
     return self;
 }
 {{newline}}
-- (NSDictionary*) asDictionary{
+- (NSDictionary*) toDictionary{
     NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
     {{#properties}}
     {{newline}}
     {{#type}}
     {{^isComplex}}if([self {{&propertyName}}] != nil) [dict setObject:[self {{&propertyName}}] forKey:@"{{&propertyName}}"];{{/isComplex}}
-    {{#isComplex}}if([self {{&propertyName}}] != nil) [dict setObject:[[self {{&propertyName}}] asDictionary] forKey:@"{{&propertyName}}"];{{/isComplex}}
+    {{#isComplex}}if([self {{&propertyName}}] != nil) [dict setObject:[[self {{&propertyName}}] toDictionary] forKey:@"{{&propertyName}}"];{{/isComplex}}
     {{#isContainer}}//container {{&propertyName}};{{/isContainer}}
     {{/type}}
     {{/properties}}
