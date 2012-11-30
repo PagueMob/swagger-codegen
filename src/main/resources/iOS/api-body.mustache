@@ -42,7 +42,7 @@ static NSString *basePath = @"[{basePath}]";
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id dataResponse) {
         NSLog(@"[{&operationName}] Failure : %@", error);
         if ([self delegate]) {
-            if ([[self delegate] respondsToSelector:@selector(onError:)]) {
+            if ([[self delegate] respondsToSelector:@selector(onError:::)]) {
                 [[self delegate] onError:request:response:error];
             }
         }
