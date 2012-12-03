@@ -33,7 +33,7 @@ static NSString *basePath = @"[{basePath}]";
     [{newline}]
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id dataResponse) {
         if ([self delegate]) {
-            if ([[self delegate] respondsToSelector:@selector([{&operationName}]Sucess:)]) {
+            if ([[self delegate] respondsToSelector:@selector([{&operationName}]Sucess[{#return}][{#hasReturn}]:[{/hasReturn}][{/return}])]) {
                 [{#return}][{#hasReturn}]id result = [[[[{#type}][{&typeName}] [{/type}]alloc] init] initWithValues:dataResponse];[{/hasReturn}][{/return}]
                 [{newline}]
                 [[self delegate] [{&operationName}]Sucess[{#return}][{#hasReturn}]:result[{/hasReturn}][{/return}]];
